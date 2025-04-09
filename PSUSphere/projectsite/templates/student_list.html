@@ -14,16 +14,16 @@
                     <br />
                     <div class="col-md-12 row">
                         <div class="col-md-6">
-                            <form class="navbar-left navbar-form nav-search mr-md-3" action="">
+                            <form class="navbar-left navbar-form nav-search mr-md-3" action="{% url 'student-list' %}">
                                 <div class="input-group">
-                                    <input type="text" placeholder="Search ..." class="form-control" />
+                                    <input type="text" placeholder="Search ..." class="form-control" name="q" />
                                     <div class="input-group-append">
                                         <span class="input-group-text">
                                             <i class="la la-search search-icon"></i>
                                         </span>
                                     </div>
                                 </div>
-                            </form>
+                            </form>   
                         </div>
                         <div class="col-md-6">
                             <div class="pull-right">
@@ -35,9 +35,11 @@
                         <table class="table table-striped mt-3">
                             <thead>
                                 <tr>
-                                    <th scope="col">Name</th>
-                                    <th scope="col">College</th>
-                                    <th scope="col">Description</th>
+                                    <th scope="col">Student Number</th>
+                                    <th scope="col">LastName</th>
+                                    <th scope="col">FirstName</th>
+                                    <th scope="col">MiddleName</th>
+                                    <th scope="col">Course</th>
                                     <th scope="col">Action</th>
                                 </tr>
                             </thead>
