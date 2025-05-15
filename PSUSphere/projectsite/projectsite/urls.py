@@ -17,7 +17,7 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, re_path
 
-from studentorg.views import HomePageView, OrganizationList, OrganizationCreateView, OrganizationUpdateView, OrganizationDeleteView, OrgMemberList, OrgMemberCreateView, OrgMemberUpdateView, OrgMemberDeleteView, ProgramList, ProgramCreateView, ProgramUpdateView, ProgramDeleteView,CollegeList, CollegeCreateView, CollegeUpdateView, CollegeDeleteView, StudentList, StudentCreateView, StudentUpdateView, StudentDeleteView
+from studentorg.views import HomePageView, OrganizationList, OrganizationCreateView, OrganizationUpdateView, OrganizationDeleteView, OrgMemberList, OrgMemberCreateView, OrgMemberUpdateView, OrgMemberDeleteView, ProgramList, ProgramCreateView, ProgramUpdateView, ProgramDeleteView,CollegeList, CollegeCreateView, CollegeUpdateView, CollegeDeleteView, StudentList, StudentCreateView, StudentUpdateView, StudentDeleteView,  BoatListView, BoatCreateView, BoatUpdateView, BoatDeleteView
 from django.contrib.auth import views as auth_views
 
 from fire.views import HomePageView, ChartView
@@ -58,4 +58,13 @@ urlpatterns = [
     #path for login and logout
     re_path(r'^login/$', auth_views.LoginView.as_view(template_name='login.html'), name='login'),
     re_path(r'^logout/$', auth_views.LogoutView.as_view(), name='logout'),
+
+
+     # Chart view path (using ChartView here as the view)
+    path('chart/', ChartView.as_view(), name='chart_view'), 
+
+    path('boats/', BoatListView.as_view(), name='boat-list'),
+    path('boats/add/', BoatCreateView.as_view(), name='boat-add'),
+    path('boats/<int:pk>/edit/', BoatUpdateView.as_view(), name='boat-edit'),
+    path('boats/<int:pk>/delete/', BoatDeleteView.as_view(), name='boat-delete'),
 ]

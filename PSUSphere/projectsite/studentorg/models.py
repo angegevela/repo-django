@@ -44,3 +44,10 @@ class OrgMember(BaseModels):
     student = models.ForeignKey(Student, on_delete=models.CASCADE)
     organization = models.ForeignKey(Organization, on_delete=models.CASCADE)
     date_joined = models.DateField()
+
+
+class Boat(models.Model):
+    boat_name = models.CharField(max_length=150)
+    length = models.DecimalField(max_digits=10, decimal_places=2)
+    width = models.DecimalField (max_digits=10, decimal_places=2)
+    height = models.DecimalField(max_digits=10, decimal_places=2)

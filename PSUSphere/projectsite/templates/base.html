@@ -22,7 +22,10 @@
     <script src="{% static 'js/plugin/chart-circle/circles.min.js' %}"></script>
     <script src="{% static 'js/plugin/jquery-scrollbar/jquery.scrollbar.min.js' %}"></script>
     <script src="{% static 'js/ready.min.js' %}"></script>
-</head>
+
+
+
+
 <body>
     <div class="wrapper">
         <div class="main-header">
@@ -213,9 +216,15 @@
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="{% url 'program-list' %}">
+                            <a class="nav-link" href="{% url 'chart_view' %}">
                                 <i class="la la-bar-chart"></i>
                                 <span>Information Charts</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'boat-add' %}">
+                                <i class="la la-bar-chart"></i>
+                                <span>Boats</span>
                             </a>
                         </li>
                         <li class="nav-item active">
@@ -260,6 +269,9 @@
                 </div>
             </footer>
         </div>
+
+
+
     </div>
     <!-- Modal -->
     <div class="modal fade" id="modalUpdate" tabindex="-1" role="dialog" aria-labelledby="modalUpdatePro" aria-hidden="true">
@@ -283,3 +295,4 @@
     </div>
 </body>
 </html>
+
