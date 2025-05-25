@@ -22,8 +22,8 @@
     <script src="{% static 'js/plugin/chart-circle/circles.min.js' %}"></script>
     <script src="{% static 'js/plugin/jquery-scrollbar/jquery.scrollbar.min.js' %}"></script>
     <script src="{% static 'js/ready.min.js' %}"></script>
-
-
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="{% static 'https://canvasjs.com/python-charts/' %}"></script>
 
 
 <body>
@@ -178,9 +178,8 @@
                     </div>
                 </div>
                 <ul class="nav">
-                    <ul class="nav flex-column">
                         <li class="nav-item">
-                            <a class="nav-link" href="index.html">
+                            <a class="nav-link" href="{% url 'chart_view' %}">
                                 <i class="la la-dashboard"></i>
                                 <span>Dashboard</span>
                             </a>
@@ -215,27 +214,20 @@
                                 <span>Program</span>
                             </a>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="{% url 'chart_view' %}">
-                                <i class="la la-bar-chart"></i>
-                                <span>Information Charts</span>
-                            </a>
-                        </li>
-                        <li class="nav-item">
+                              <li class="nav-item">
                             <a class="nav-link" href="{% url 'boat-add' %}">
                                 <i class="la la-bar-chart"></i>
                                 <span>Boats</span>
                             </a>
                         </li>
                         <li class="nav-item active">
-                            <a class="nav-link active" href="typography.html">
+                            <a class="nav-link active" href="{% url 'typography' %}">
                                 <i class="la la-font"></i>
                                 <span>Typography</span>
                                 <span class="badge badge-danger ml-2">25</span>
                             </a>
                         </li>
-                    </ul>
-                    
+
                 </ul>
             </div>
         </div>

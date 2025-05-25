@@ -15,10 +15,16 @@ from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required
 
 from django.contrib import messages
-from django.shortcuts import render, redirect
+from django.shortcuts import render
 
+from django.http import JsonResponse
+
+from django.db.models import Count
+from django.db.models.functions import TruncMonth
+from collections import OrderedDict
+import calendar
+from datetime import datetime
 @method_decorator(login_required, name='dispatch')
-
 # Create your views here.
 class HomePageView(ListView):
     model = Organization
@@ -301,30 +307,12 @@ class BoatCreateView(CreateView):
                     errors.append(f"{field_name.capitalize()} must be greater than 0.")
             except (ValueError, TypeError):
                 errors.append(f"{field_name.capitalize()} must be a valid number.")
-
-        # If errors exist, display them and return to the form
         if errors:
             for error in errors:
                 messages.error(request, error)
             return self.form_invalid(self.get_form())
-
-        # Call the parent’s post() if validation passes
         return super().post(request, *args, **kwargs)
 
-class BoatListView(ListView):
-    model = Boat
-    context_object_name = 'boats'
-    template_name = 'boat_list.html'
-    paginate_by = 5
-
-    def get_queryset(self) -> QuerySet:
-        query = self.request.GET.get("q")
-        if query:
-            return Boat.objects.filter(
-                Q(name__icontains=query) |
-                Q(type__icontains=query)
-            )
-        return Boat.objects.all()
 
 class BoatUpdateView(UpdateView):
     model = Boat
@@ -345,21 +333,95 @@ class BoatUpdateView(UpdateView):
                     errors.append(f"{field_name.capitalize()} must be greater than 0.")
             except (ValueError, TypeError):
                 errors.append(f"{field_name.capitalize()} must be a valid number.")
-
-        # If errors exist, display them and return to the form
         if errors:
             for error in errors:
                 messages.error(request, error)
             return self.form_invalid(self.get_form())
-
-        # Call the parent’s post() if validation passes
         return super().post(request, *args, **kwargs)
 
-class BoatDeleteView(DeleteView):
-    model = Boat
-    template_name = 'boat_del.html'
-    success_url = reverse_lazy('boat-list')
+def pie_chart_data(request):
+    org_counts = Organization.objects.values('college__college_name').annotate(total=Count('id'))
 
-    def get_success_url(self):
-        messages.success(self.request, 'Boat entry successfully deleted.')
-        return reverse_lazy('boat-list')
+    labels = []
+    data = []
+    for item in org_counts:
+        labels.append(item['college__college_name'])
+        data.append(item['total'])
+
+    total_members = OrgMember.objects.count()
+
+    avg_members_per_org = OrgMember.objects.values('organization').annotate(count=Count('id'))
+    avg_members = sum([o['count'] for o in avg_members_per_org]) / avg_members_per_org.count() if avg_members_per_org else 0
+
+    data_chart = {
+        "labels": labels,
+        "datasets": [
+            {
+                "label": "Organizations per College",
+                "data": data,
+                "backgroundColor": [
+                    '#F2C078', '#27548A', '#4ED7F1', '#A53860',
+                    '#FF9F00', '#3A7D44', '#FF6384', '#36A2EB'
+                ],
+            },
+            {
+                "label": "Total Org Members vs. Avg Members/Org",
+                "data": [total_members, avg_members],
+                "backgroundColor": ['#FF9F00', '#3A7D44'],
+            }
+        ]
+    }
+    return JsonResponse(data_chart)
+def stacked_bar_data(request):
+    org_members = OrgMember.objects.annotate(
+        month=TruncMonth('date_joined')
+    ).values(
+        'month', 'organization__college__college_name'
+    ).annotate(
+        count=Count('id')
+    )
+
+    month_labels = [
+        datetime(2023, m, 1).strftime('%B') for m in range(1, 13)
+    ]
+
+    colleges = College.objects.values_list('college_name', flat=True)
+    data_matrix = {college: [0] * 12 for college in colleges}
+
+    for entry in org_members:
+        month = entry['month']
+        if not month:
+            continue
+        month_idx = month.month - 1  
+        college = entry['organization__college__college_name']
+        data_matrix[college][month_idx] += entry['count']
+
+
+    background_colors = [
+        "rgb(255, 99, 132)", "rgb(54, 162, 235)", "rgb(255, 206, 86)",
+        "rgb(75, 192, 192)", "rgb(153, 102, 255)", "rgb(255, 159, 64)",
+        "rgb(201, 203, 207)", "rgb(100, 255, 218)"
+    ]
+
+    datasets = []
+    for i, (college, counts) in enumerate(data_matrix.items()):
+        datasets.append({
+            "label": college,
+            "data": counts,
+            "backgroundColor": background_colors[i % len(background_colors)]
+        })
+
+
+    data = {
+        "labels": month_labels,
+        "datasets": datasets
+    }
+
+    return JsonResponse(data)
+
+
+def chart_view(request):
+    return render(request, "chart.html")
+
+def typography_view(request):
+    return render(request, 'typography.html')

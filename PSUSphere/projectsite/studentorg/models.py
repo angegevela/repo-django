@@ -22,7 +22,7 @@ class Program(BaseModels):
     def __str__(self):
         return self.prog_name
 
-class Organization(BaseModels):  # Inherit from BaseModels to include timestamps
+class Organization(BaseModels):  
     name = models.CharField(max_length=150)
     college = models.ForeignKey(College, blank=True, on_delete=models.CASCADE)
     description = models.CharField(max_length=500)
